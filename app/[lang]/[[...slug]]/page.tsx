@@ -50,7 +50,6 @@ const getData = async (
     slug: cleanSlug,
     language: locale,
     config,
-    fetchOptions: { next: { revalidate: 3 } },
   }).catch(() => {
     errorPage = true
     return null
@@ -62,6 +61,8 @@ const getData = async (
     errorPage,
   }
 }
+
+export const revalidate = process.env.NODE_ENV === 'development' ? 3 : false
 
 export async function generateStaticParams({
   params,

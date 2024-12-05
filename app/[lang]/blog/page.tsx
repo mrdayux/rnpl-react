@@ -29,16 +29,13 @@ const getData = async (
   }
 
   const [tags, posts] = await Promise.all([
-    fetchTags(config.apiKey, undefined, undefined, undefined, {
-      next: { revalidate: 3 },
-    }),
+    fetchTags(config.apiKey),
     fetchPages({
       type: 'blog',
       pageSize: 1000,
       sort: '-publishedAt',
       fetchExternalData: true,
       config,
-      fetchOptions: { next: { revalidate: 3 } },
     }).catch(() => {
       errorPage = true
       return null
@@ -52,6 +49,8 @@ const getData = async (
     errorPage,
   }
 }
+
+export const revalidate = process.env.NODE_ENV === 'development' ? 3 : false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -74,9 +73,7 @@ export default async function Page({ params }: { params: { lang: string } }) {
               </h1>
 
               <div className="flex flex-wrap items-center">
-                {tags?.map((tag) => (
-                  <TagListItem tag={tag} key={tag} />
-                ))}
+                {tags?.map((tag) => <TagListItem tag={tag} key={tag} />)}
               </div>
 
               <hr className="mt-6 mb-10 dark:border-gray-600" />

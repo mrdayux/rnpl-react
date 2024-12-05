@@ -37,14 +37,11 @@ const getData = async (
       pageSize: 1000,
       sort: '-publishedAt',
       config,
-      fetchOptions: { next: { revalidate: 3 } },
     }).catch(() => {
       errorPage = true
       return null
     }),
-    fetchTags(config.apiKey, undefined, undefined, undefined, {
-      next: { revalidate: 3 },
-    }),
+    fetchTags(config.apiKey),
   ])
 
   return {
@@ -54,6 +51,8 @@ const getData = async (
     errorPage,
   }
 }
+
+export const revalidate = process.env.NODE_ENV === 'development' ? 3 : false
 
 export async function generateStaticParams({
   params,
@@ -114,9 +113,7 @@ export default async function Page({
               </div>
 
               <div className="flex flex-wrap items-center">
-                {tags?.map((tag) => (
-                  <TagListItem tag={tag} key={tag} />
-                ))}
+                {tags?.map((tag) => <TagListItem tag={tag} key={tag} />)}
               </div>
 
               <hr className="mt-6 mb-10 dark:border-gray-600" />
